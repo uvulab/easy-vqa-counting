@@ -13,6 +13,8 @@
 - `run_model.py` runs a toy example
 - `model.py` contains our models
 - `load_dataset.py` loads the dataset set with our format
+- `constants.py`
+- `image_gen.py`
 
 ## Project 
 - See the dataset folder for our format

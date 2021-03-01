@@ -24,6 +24,8 @@ project
 │   run_model.py 
 |   model.py
 |   load_dataset.py
+|   constants.py
+|   image_gen.py
 │
 └───data
 │   │

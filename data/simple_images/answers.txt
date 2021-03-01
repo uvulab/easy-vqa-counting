@@ -1,0 +1,16 @@
+no
+three
+red
+rectangle
+one
+yes
+teal
+brown
+yellow
+green
+triangle
+black
+blue
+gray
+two
+circle

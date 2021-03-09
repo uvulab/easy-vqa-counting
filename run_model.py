@@ -44,8 +44,8 @@ def run_training_v1(path_dataset, path_model):
     Example on how to train a model
     """
     root = "./data/" + path_dataset
-    epochs = 2
-    batch_size = 1
+    epochs = 20
+    batch_size = 100
 
     #DATASET
     transformations = transforms.Compose([transforms.ToTensor()])
@@ -55,10 +55,11 @@ def run_training_v1(path_dataset, path_model):
                                                     shuffle=False)
 
     #MODEL                                 
+    print(train_set.vocabulary(), train_set.unique_answers)
     model = ModelSimple(len(train_set.vocabulary()), len(train_set.unique_answers)) 
 
     #OPTIMIZER
-    optimizer = optim.Adam(model.parameters(), lr=0.01)
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     #training loop
     for epoch in range(epochs):
@@ -87,7 +88,7 @@ def run_training_v1(path_dataset, path_model):
             total_correct += get_num_correct(preds, answers_1hot)
 
         print(
-            "epoch:", 0, 
+            "epoch:", epoch, 
             "total_correct:", total_correct, 
             "loss:", total_loss
         )
@@ -158,8 +159,8 @@ def testing_v1(path_dataset, path_model):
 
 
 if __name__ == "__main__":
-    dataset = "simple_images"
-    model_name = "fabian_test1"
+    dataset = "color_single"
+    model_name = "color_single"
     print()
     print('training')
     run_training_v1(dataset, model_name)

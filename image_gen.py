@@ -3,7 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 import math
 
-from constants import MIN_SIZE, RED, GREEN, BLUE, CIRCLE, TRIANGLE, RECTANGLE
+from constants import RED, GREEN, BLUE, CIRCLE, TRIANGLE, RECTANGLE
 
 colors = dict()
 colors[RED] = (255, 0, 0)
@@ -11,10 +11,11 @@ colors[GREEN] = (0, 255, 0)
 colors[BLUE] = (0, 0, 255)
 
 class Image:
-	def __init__(self, w, h, max_num_shapes, allow_overlap):
+	def __init__(self, w, h, max_num_shapes, min_size, allow_overlap):
 		self.w = w
 		self.h = h
 		self.max_num_shapes = max_num_shapes
+		self.min_size = min_size
 		self.allow_overlap = allow_overlap
 		self.img = np.zeros((h, w, 3),dtype=np.uint8)
 		self.free_spaces = []
@@ -22,7 +23,7 @@ class Image:
 			for y in range(self.h):
 				w = self.w - x
 				h = self.h - y
-				if w >= MIN_SIZE and h >= MIN_SIZE:
+				if w >= self.min_size and h >= self.min_size:
 					self.free_spaces.append((x, y, w, h))
 		#self.generate()
 
@@ -32,7 +33,9 @@ class Image:
 		self.boxes = []
 		while len(self.shapes) < self.max_num_shapes and len(self.free_spaces) > 0:
 			shape = np.random.choice([CIRCLE, TRIANGLE, RECTANGLE])
+			#shape = np.random.choice([CIRCLE, RECTANGLE])
 			color = np.random.choice([RED, GREEN, BLUE])
+			#color = np.random.choice([RED, BLUE])
 			box = self.place_shape(shape, color)
 			self.shapes.append(shape)
 			self.colors.append(color)
@@ -44,13 +47,13 @@ class Image:
 			return None
 		(x, y, fw, fh) = self.free_spaces[np.random.randint(len(self.free_spaces))]
 		if shape == CIRCLE or shape == TRIANGLE: #symmetric and odd
-			w = np.random.randint(MIN_SIZE, min(fw,fh)+1)
+			w = np.random.randint(self.min_size, min(fw,fh)+1)
 			if w % 2 == 0:
 				w -= 1
 			h = w
 		else:
-			w = np.random.randint(MIN_SIZE, fw+1)
-			h = np.random.randint(MIN_SIZE, fh+1)
+			w = np.random.randint(self.min_size, fw+1)
+			h = np.random.randint(self.min_size, fh+1)
 		if shape == CIRCLE:
 			self.draw_circle(color, x + w // 2, y + w // 2, w // 2)
 		if shape == TRIANGLE:
@@ -77,7 +80,7 @@ class Image:
 				#bounding box is above, restrict free height
 				if y < by and max(x, bx) < min(x + w, bx + bw):
 					new_h = min(h, by - y)
-				if new_w >= MIN_SIZE and new_h >= MIN_SIZE:
+				if new_w >= self.min_size and new_h >= self.min_size:
 					new_free_spaces.append((x, y, new_w, new_h))
 		self.free_spaces = new_free_spaces
 
@@ -107,7 +110,7 @@ if __name__ == "__main__":
 	img.show()
 	"""
 	for _ in range(5):
-		img = Image(64, 64, 5, False)
+		img = Image(64, 64, 5, 9, False)
 		img.generate()
 		img.show()
 

@@ -6,16 +6,16 @@ from constants import RED, GREEN, BLUE, CIRCLE, TRIANGLE, RECTANGLE
 from image_gen import Image
 
 #EDIT THESE PARAMETERS---------------------------------
-dataset_name = "color_single"
+dataset_name = "single"
 color_questions = True
-shape_questions = False
-n_train_images = 1000
-n_test_images = 100
+shape_questions = True
+n_train_images = 8000
+n_test_images = 1000
 max_shape_count = 1
 img_size = 64
 min_shape_size = 15
 allow_overlap = False
-balance_factor = 1 #ratio of the most common answer to the least common answer
+balance_factor = 2 #ratio of the most common answer to the least common answer
 #------------------------------------------------------
 
 color_names = {RED: "red", GREEN: "green", BLUE: "blue"}

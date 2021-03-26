@@ -6,7 +6,7 @@ import os
 import numpy as np
 #from easy_vqa import get_train_questions, get_test_questions, get_train_image_paths, get_test_image_paths, get_answers
 
-def setup(data_dir):
+def setup(data_dir, use_boxes=False):
   print('\n--- Reading questions...')
   #if use_data_dir:
   def read_questions(path):
@@ -60,6 +60,24 @@ def setup(data_dir):
         paths[image_id] = os.path.join(dir, filename)
     return paths
 
+  #a dict mapping image ID to a list of(x0, y0, x1, y1, class_id) bounding boxes
+  def read_boxes(dir):
+    result = dict()
+    with open(dir + '/_annotations.txt') as file:
+      for line in file:
+        #be sure the image filenames don't have spaces!
+        args = line.strip().split(" ")
+        image_id = int(args[0][:-4]) #remove the .png
+        boxes = []
+        for i in range(1, len(args)):
+          a = args[i].split(",")
+          box = ()
+          for n in a:
+            box += (int(n),)
+          boxes.append(box)
+        result[image_id] = boxes
+    return result
+
   train_ims = read_images(extract_paths(data_dir+'/train'))
   test_ims  = read_images(extract_paths(data_dir+'/test'))
   #else:
@@ -70,6 +88,11 @@ def setup(data_dir):
   print(f'Read {len(train_ims)} training images and {len(test_ims)} testing images.')
   print(f'Each image has shape {im_shape}.')
 
+  #TODO: format these for use in the model
+  if use_boxes:
+    train_boxes = read_boxes(data_dir+'/train')
+    test_boxes = read_boxes(data_dir+'/test')
+    print(test_boxes)
 
   print('\n--- Fitting question tokenizer...')
   tokenizer = Tokenizer()

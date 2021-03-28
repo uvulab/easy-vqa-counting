@@ -2,7 +2,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPooling2D, Flatten, Multiply
 from tensorflow.keras.optimizers import Adam
 
-def build_model(im_shape, vocab_size, num_answers, big_model):
+def build_model_easy_vqa(im_shape, vocab_size, num_answers, big_model):
   # The CNN
   im_input = Input(shape=im_shape)
   x1 = Conv2D(8, 3, padding='same')(im_input)
@@ -29,3 +29,6 @@ def build_model(im_shape, vocab_size, num_answers, big_model):
   model.compile(Adam(lr=5e-4), loss='categorical_crossentropy', metrics=['accuracy'])
 
   return model
+
+def arrange_inputs_easy_vqa(images, questions, boxes, box_classes):
+	return [images, questions]

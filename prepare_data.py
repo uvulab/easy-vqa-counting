@@ -4,6 +4,7 @@ from tensorflow.keras.utils import to_categorical
 import json
 import os
 import numpy as np
+from constants import NUM_SHAPE_CLASSES, MAX_COUNT
 #from easy_vqa import get_train_questions, get_test_questions, get_train_image_paths, get_test_image_paths, get_answers
 
 def setup(data_dir, use_boxes=False):
@@ -78,6 +79,14 @@ def setup(data_dir, use_boxes=False):
         result[image_id] = boxes
     return result
 
+  #a sequence of MAX_COUNT vectors. The ith vector contains the onehot-encoded class of the ith box,
+  #or zeros if fewer than i boxes
+  def format_box_classes(box_list):
+    result = np.zeros((MAX_COUNT, NUM_SHAPE_CLASSES))
+    for i, box in enumerate(box_list):
+      result[i][box[4]] = 1.0
+    return result
+
   train_ims = read_images(extract_paths(data_dir+'/train'))
   test_ims  = read_images(extract_paths(data_dir+'/test'))
   #else:
@@ -87,12 +96,6 @@ def setup(data_dir, use_boxes=False):
   im_shape = train_ims[0].shape
   print(f'Read {len(train_ims)} training images and {len(test_ims)} testing images.')
   print(f'Each image has shape {im_shape}.')
-
-  #TODO: format these for use in the model
-  if use_boxes:
-    train_boxes = read_boxes(data_dir+'/train')
-    test_boxes = read_boxes(data_dir+'/test')
-    print(test_boxes)
 
   print('\n--- Fitting question tokenizer...')
   tokenizer = Tokenizer()
@@ -122,6 +125,15 @@ def setup(data_dir, use_boxes=False):
   test_Y = to_categorical(test_answer_indices)
   print(f'Example model output: {train_Y[0]}')
 
-  return (train_X_ims, train_X_seqs, train_Y, test_X_ims, test_X_seqs,
-          test_Y, im_shape, vocab_size, num_answers,
+  train_box_classes = None
+  test_box_classes = None
+  if use_boxes:
+    train_boxes = read_boxes(data_dir+'/train')
+    test_boxes = read_boxes(data_dir+'/test')
+    train_box_classes = np.array([format_box_classes(train_boxes[id]) for id in train_image_ids])
+    test_box_classes = np.array([format_box_classes(test_boxes[id]) for id in test_image_ids])
+
+  #TODO: include box coordinates
+  return (train_X_ims, train_X_seqs, train_box_classes, train_Y, test_X_ims, test_X_seqs,
+          test_box_classes, test_Y, im_shape, vocab_size, num_answers,
           all_answers, test_qs, test_answer_indices)  # for the analyze script

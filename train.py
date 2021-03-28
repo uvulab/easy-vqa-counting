@@ -7,9 +7,10 @@ from prepare_data import setup
 """
 To use a different model: create a new model file and import new versions of build_model and arrange_inputs
 build_model(im_shape, vocab_size, num_answers, big_model) creates the model
-arrange_inputs(images, questions, box_classes) returns a list of desired inputs in order of input to the model
+arrange_inputs(images, questions, boxes, box_classes) returns a list of desired inputs in order of input to the model
 see easy_vqa_model.py for an example
 questions are bag-of-words encoded
+boxes will be the box coordinates and/or image slices, not used yet
 box_classes are each a MAX_COUNT * NUM_SHAPE_CLASSES (from constants.py) array where each row represents
 one box in the image, containing either the one hot encoding of that box's shape class, or zeros if not enough boxes
 """

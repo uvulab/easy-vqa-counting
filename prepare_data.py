@@ -134,6 +134,19 @@ def setup(data_dir, use_boxes=False):
     test_box_classes = np.array([format_box_classes(test_boxes[id]) for id in test_image_ids])
 
   #TODO: include box coordinates
-  return (train_X_ims, train_X_seqs, train_box_classes, train_Y, test_X_ims, test_X_seqs,
-          test_box_classes, test_Y, im_shape, vocab_size, num_answers,
-          all_answers, test_qs, test_answer_indices)  # for the analyze script
+  return (train_X_ims,        #images-numpy arrays. Dim: [num_questions x 64 x 64 x 3]
+          train_X_seqs,       #one-hot questions. Dim: [num_questions x one_hot]
+          train_box_classes,  #one-hot ground truth for each bbox. Dim: [num_questions x 5 x 3]
+          train_Y,            #one-hot answer. Dim: [num_questions x 4]
+          train_image_ids,    #TRAIN list of image id per question.
+          test_X_ims,         # same for test
+          test_X_seqs,        # same for test
+          test_box_classes,   # same for test
+          test_Y,             # same for test
+          test_image_ids,     # same for test
+          im_shape,           #image shape. Dim: [64 x 64 x 3]
+          vocab_size,         #vocabulary size from questions.
+          num_answers,        #total num of answers.
+          all_answers,        #answer's list.
+          test_qs,            #TEST string list of questions.
+          test_answer_indices)#TEST indices of images from which the questions belong to.

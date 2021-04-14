@@ -1,10 +1,12 @@
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.utils import to_categorical
+import cv2
 import json
 import os
 import numpy as np
-from constants import NUM_SHAPE_CLASSES, MAX_COUNT
+#import matplotlib.pyplot as plt
+from constants import NUM_SHAPE_CLASSES, MAX_COUNT, BOX_SIZE
 #from easy_vqa import get_train_questions, get_test_questions, get_train_image_paths, get_test_image_paths, get_answers
 
 def setup(data_dir, use_boxes=False):
@@ -79,6 +81,19 @@ def setup(data_dir, use_boxes=False):
         result[image_id] = boxes
     return result
 
+  #a list of images containing the resized contents of each of the given boxes in the given image, or zeros if none
+  def format_box_features(image, boxes):
+    #plt.imshow(image)
+    #plt.show()
+    result = np.zeros((MAX_COUNT, BOX_SIZE, BOX_SIZE, 3))
+    for i, coords in enumerate(boxes):
+      (x0, y0, x1, y1, _) = coords
+      box = image[y0:y1+1,x0:x1+1,:]
+      result[i,:,:,:] = cv2.resize(box, dsize=(BOX_SIZE,BOX_SIZE))
+      #plt.imshow(result[i,:,:,:])
+      #plt.show()
+    return result
+
   #a sequence of MAX_COUNT vectors. The ith vector contains the onehot-encoded class of the ith box,
   #or zeros if fewer than i boxes
   def format_box_classes(box_list):
@@ -125,22 +140,27 @@ def setup(data_dir, use_boxes=False):
   test_Y = to_categorical(test_answer_indices)
   print(f'Example model output: {train_Y[0]}')
 
+  train_box_features = None
+  test_box_features = None
   train_box_classes = None
   test_box_classes = None
   if use_boxes:
     train_boxes = read_boxes(data_dir+'/train')
     test_boxes = read_boxes(data_dir+'/test')
+    train_box_features = np.array([format_box_features(train_ims[id],train_boxes[id]) for id in train_image_ids])
+    test_box_features = np.array([format_box_features(test_ims[id],test_boxes[id]) for id in test_image_ids])
     train_box_classes = np.array([format_box_classes(train_boxes[id]) for id in train_image_ids])
     test_box_classes = np.array([format_box_classes(test_boxes[id]) for id in test_image_ids])
 
-  #TODO: include box coordinates
   return (train_X_ims,        #images-numpy arrays. Dim: [num_questions x 64 x 64 x 3]
           train_X_seqs,       #one-hot questions. Dim: [num_questions x one_hot]
+          train_box_features, #sequence of box contents for each image. [num_questions x 5 x 15 x 15 x 3]
           train_box_classes,  #one-hot ground truth for each bbox. Dim: [num_questions x 5 x 3]
           train_Y,            #one-hot answer. Dim: [num_questions x 4]
           train_image_ids,    #TRAIN list of image id per question.
           test_X_ims,         # same for test
           test_X_seqs,        # same for test
+          test_box_features,  # same for test
           test_box_classes,   # same for test
           test_Y,             # same for test
           test_image_ids,     # same for test

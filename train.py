@@ -7,23 +7,38 @@ from prepare_data import setup
 
 """
 To use a different model: create a new model file and import new versions of build_model and arrange_inputs
-build_model(im_shape, vocab_size, num_answers, big_model) creates the model
-arrange_inputs(images, questions, boxes, box_classes) returns a list of desired inputs in order of input to the model
+-build_model(im_shape, vocab_size, num_answers, big_model) creates the model
+-arrange_inputs(images, questions, boxes, box_classes) returns a list of desired inputs in order of input to the model
 see easy_vqa_model.py for an example
-questions are bag-of-words encoded
-boxes will be the box coordinates and/or image slices, not used yet
-box_classes are each a MAX_COUNT * NUM_SHAPE_CLASSES (from constants.py) array where each row represents
+-questions are bag-of-words encoded
+-boxes are, for each question, a MAX_COUNT * BOX_SIZE * BOX_SIZE * 3 array representing a list of image slices
+at each bounding box, all resized to BOX_SIZE, or zeros if no object is present
+-box_classes are, for each question, a MAX_COUNT * NUM_SHAPE_CLASSES (from constants.py) array where each row represents
 one box in the image, containing either the one hot encoding of that box's shape class, or zeros if not enough boxes
 """
+model_functions = {
+	"easy_vqa": (build_model_easy_vqa, arrange_inputs_easy_vqa),
+	"count": (build_model_count, arrange_inputs_count)
+}
+
+
 build_model = build_model_count
 arrange_inputs = arrange_inputs_count
 use_boxes = True
 
-if len(sys.argv) < 2:
-	print("usage: python train.py data_dir (--big-model)")
+if len(sys.argv) < 3:
+	print("usage: python train.py data_dir model_name (--big-model)")
 	exit()
 
 data_dir = sys.argv[1]
+model_name = sys.argv[2]
+if model_name in model_functions:
+	build_model, arrange_inputs = model_functions[model_name]
+else:
+	print("available models:")
+	for name in model_functions:
+		print(name)
+	exit()
 big_model = len(sys.argv) >= 3 and sys.argv[2] == "--big-model"
 
 

@@ -2,13 +2,16 @@
 
 ## Introduction
 
-This project is motivated by the tendency for visual question answering models to struggle with counting questions. [This blog post](https://blog.einstein.ai/interpretable-counting-for-visual-question-answering/) introduces the problem and proposes several specialized counting modules as a solution. Another goal is to provide a small, simple dataset for quick experimentation. Our code is based on [easy-VQA-keras](https://github.com/vzhou842/easy-VQA-keras), but adapted for counting.
+This project is motivated by the tendency for visual question answering (VQA) models to struggle with counting questions. [This blog post](https://blog.einstein.ai/interpretable-counting-for-visual-question-answering/) introduces the problem and proposes several specialized counting modules as a solution. Another goal is to provide a small, simple dataset for quick experimentation. Our code is based on [easy-VQA-keras](https://github.com/vzhou842/easy-VQA-keras), but adapted for counting.
 
 We hope this code will provide a starting point to investigate more challenging counting problems.
 
 <p align="center">
     <img src="https://github.com/jksenter/cosc620_vqa/blob/master/vqa-model.png?raw=true" width="800"/>
 </p>
+
+## What is the task about?
+The main goal of VQA is to take an image (feature maps) and a question (text embedding) to get a single answer (one or few words). In its simplest implementation, e.g. using [easy-VQA-keras](https://github.com/vzhou842/easy-VQA-keras), 
 
 ## Install the following libraries
 

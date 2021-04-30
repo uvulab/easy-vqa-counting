@@ -13,7 +13,7 @@ However, some models as [TallyQA](https://arxiv.org/abs/1810.12440) and [Interpr
 
 ### Quick insight about our method
 
-Our method is based on the following steps:
+Our method has the following components:
 
 - a question embedding which is just a simple Bag of Words (BoW) of the question. This is a simple approach but enough for counting questions which will be pretty similar.
 - a few embeddings from the bounding boxes. For simplicity, we still do not have the object detector right now, but we have the bounding boxes since we generate the dataset we know were are the objects. We take every bounding box and create a feature map for every one present in the image. For example, in the next figure we have only three bounding boxes, so we have three feature maps in the rest of the model.
@@ -23,6 +23,17 @@ Our method is based on the following steps:
 <p align="center">
     <img src="https://github.com/jksenter/cosc620_vqa/blob/master/vqa-model.png?raw=true" width="800"/>
 </p>
+
+Our method takes the question embedding (BoW) and the feature maps bounding boxes in the image, performs a fusion (we have implemented element-wise operation), then combines all the resulting features maps to finally perform a prediction using a softmax layer.
+
+### Fusion methods
+
+As indicated in [Fusion Techniques](https://www.sciencedirect.com/science/article/pii/S1566253518308893), element-wise operations can be used to perform the fusion. We performed the following operations:
+- Sum (slowest method to converge).
+- Concatenation.
+- Multiplication (fastest method to converge).
+
+In addition, when we combined any of the previous method with the Gated Tanh Units the performance and convergence were improved.
 
 ## Install the following libraries
 
@@ -63,6 +74,11 @@ Once you've chosen your parameters, simply run `python dataset_gen.py` to genera
 ![](./data/box_test/train/4.png)
 ![](./data/box_test/train/5.png)
 ![](./data/box_test/train/6.png)
+![](./data/box_test/train/7.png)
+![](./data/box_test/train/8.png)
+![](./data/box_test/train/9.png)
+![](./data/box_test/train/10.png)
+![](./data/box_test/train/11.png)
 
 ### Code to generate a new dataset (dataset_gen.py)
 

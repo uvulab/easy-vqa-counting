@@ -79,6 +79,10 @@ Once you've chosen your parameters, simply run `python dataset_gen.py` to genera
 ![](./data/box_test/train/9.png)
 ![](./data/box_test/train/10.png)
 ![](./data/box_test/train/11.png)
+![](./data/box_test/train/12.png)
+![](./data/box_test/train/13.png)
+![](./data/box_test/train/14.png)
+![](./data/box_test/train/15.png)
 
 ### Code to generate a new dataset (dataset_gen.py)
 

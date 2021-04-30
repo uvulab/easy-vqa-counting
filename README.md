@@ -33,7 +33,24 @@ As indicated in [Fusion Techniques](https://www.sciencedirect.com/science/articl
 - Concatenation.
 - Multiplication (fastest method to converge).
 
-In addition, when we combined any of the previous method with the Gated Tanh Units the performance and convergence were improved.
+In addition, when we combined any of the previous method with the Gated Tanh Units the performance and convergence were improved. In the class train.py, the method for fusion is defined as
+
+```python
+model_functions = {
+	"easy_vqa": (build_model_easy_vqa, arrange_inputs_easy_vqa),
+	"count": (build_model_count_gated_tanh, arrange_inputs_count)
+}
+```
+
+By default the method aaaa is set. We have 6 different predefined method for testing purposes. You can pick one of the following:
+- build_model_count_concat 
+- build_model_count_sum_32  
+- build_model_count_sum_288
+- build_model_count_mul_32 
+- build_model_count_mul_288 
+- build_model_count_gated_tanh
+
+Details for this method are in the class count_model.py. You can defined your own method in this class.
 
 ## Install the following libraries
 

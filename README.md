@@ -4,8 +4,6 @@
 
 This project is motivated by the tendency for visual question answering models to struggle with counting questions. [This blog post](https://blog.einstein.ai/interpretable-counting-for-visual-question-answering/) introduces the problem and proposes several specialized counting modules as a solution. Another goal is to provide a small, simple dataset for quick experimentation. Our code is based on [easy-VQA-keras](https://github.com/vzhou842/easy-VQA-keras), but adapted for counting.
 
-We currently include two models. The `easy_vqa` model, taken from easy-VQA-keras, is a simple convolutional network over the entire image, and fails to count beyond one. This failure demonstrates the need for specialized counting network. The `count` model, similar to SoftCount in the blog post, takes a list of small images representing each object within its bounding box. Then each object receives a score of how well it fits the question, and the scores are summed to produce a count. This model can successfully learn to count (at least to 10) but still has limitations. It cannot handle questions that depend on an object's relationship to another object, and it requires the ground-truth bounding boxes. Realistically, an object detector may return multiple boxes for the same object, and non-maximum suppression is needed.
-
 We hope this code will provide a starting point to investigate more challenging counting problems.
 
 ## Install the following libraries
@@ -40,7 +38,7 @@ Once you've chosen your parameters, simply run `python dataset_gen.py` to genera
 
 ## Preprocessing the Data
 
-`prepare_data.py` loads the data you just generated into a form the neural network can understand. The setup function returns everything you will need:
+`prepare_data.py` loads the data you just generated into a form the neural network can understand. You won't need to run this file directly but you should understand how it works. The setup function returns everything you will need:
 
 - `train_X_ims`: an image for each question. An array of shape (num_questions * img_size * img_size * 3). Num_questions = the size of the dataset.
 - `train_X_seqs`: the questions in bag-of-words format. For example, if the vocabulary is `["circle", "triangle", "rectangle", "red", "green", "blue", "any"]`, then the question "red circle" would be `[1, 0, 0, 1, 0, 0, 0]`. Total shape: (num_questions * vocab_size). Note that bag-of-words only works for this dataset because the order of words in the question doesn't matter.
@@ -51,6 +49,24 @@ Once you've chosen your parameters, simply run `python dataset_gen.py` to genera
 - `vocab_size`: the number of possible words in the question
 - `num_answers`: the number of possible answers (will be from 0 to max_shape_count)
 - Any other values returned are not currently used.
+
+If you're training a new model and want to include additional inputs such as the coordinates of the bounding boxes, you can find them in this function and add them to the returned values. You can change the formatting of bounding boxes by writing a new function similar to `format_box_features`.
+
+## Training a Model
+
+We include two example models, `easy_vqa_model` and `count_model`. You can create your own models following the format of these models. Every model must implement two functions:
+
+- `build_model(im_shape, vocab_size, num_answers, big_model)`: creates the Keras model with the given image shape, vocabulary size, and number of answers, which will be returned by `prepare_data.py`. These, along with the constants BOX_SIZE and MAX_COUNT, are needed to determine the input and output sizes of the model. `big_model` is a boolean which optionally allows you to support multiple layer sizes.
+
+Observe that `easy_vqa_model` takes the entire image and the question as inputs, extracts features from each separately, then merges the image and question features to produce a final answer. This architecture worked fine for the original non-counting `easy_vqa`, but it struggles to count beyond one. Evidently, the convolutional layers can detect whether a feature is present or not, but cannot keep track of multiple objects separately. This failure demonstrates the need for specialized counting networks.
+
+The `count_model`, instead of using the full image, uses a list of small images representing the contents of each bounding box. `img_model` is a repeated module for each box image, which takes the image and the question as an input, extracts features from the image, and outputs a score of whether that box should be counted for that question. The scores for each box are then summed, and the sum is converted to an answer. This model performs much better than the last on counting, showing the importance of detecting individual objects.
+
+- `arrange_inputs(images, questions, boxes, box_classes)`: takes all of the possible inputs returned by `prepare_data.py` and returns a list of the inputs actually needed for your model. For example, `easy_vqa_model` needs `[images, questions]`, and `count_model` needs a sequence of boxes (note how the dimensions are rearranged) followed by the questions.
+
+When creating your own model, create a new file and import it to `train.py` in the same manner as these two models.
+
+To train a count_model on the default dataset you just generated, run `python train.py data/five count`. The model will train for 50 epochs, but you can of course change this number. WARNING: sometimes a bad random initialization will cause the model not to learn anything at all. If accuracy doesn't improve at all after several epochs, terminate the program and try again. Accuracy should steadily improve and eventually reach 1.0 if you have 5 or fewer shapes.
 
 ## Code Locations
 

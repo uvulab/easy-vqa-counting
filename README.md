@@ -32,13 +32,25 @@ Let's head to `dataset_gen.py` and walk through generating your first dataset. F
 - `img_size = 64`: the size in pixels of the square images. For 5 or fewer shapes, 64 should be enough. With more, the image will start to get crowded (an image will only add shapes until no more can fit) and size should be increased.
 - `min_shape_size = 15`: the minimum size in pixels of the bounding box of each shape in the image.
 - `allow_overlap = False`: whether shapes are allowed to overlap in the image. Setting this to True would make the VQA task more difficult.
-- `balance_factor = math.ceil(max_shape_count / 2.0)` the ratio of the most common answer to the least common answer. Initally, every possible question is generated, which will create many more questions with low numbers than high numbers, and incentivize the model to answer a low number all the time. Balancing_factor sets a maximum ratio of one answer to another and discards excess questions, so, for example, with max_shape_count = 5, there will be 3 "zero" questions for every "five" question.
+- `balance_factor = math.ceil(max_shape_count / 2.0)` the ratio of the most common answer to the least common answer. Initally, every possible question is generated, which will create many more questions with low numbers than high numbers, and incentivize the model to answer a low number all the time. Balance_factor sets a maximum ratio of one answer to another and discards excess questions, so, for example, with max_shape_count = 5, there will be 3 "zero" questions for every "five" question.
 - `include_boxes = True`: whether the bounding boxes of the form (x0, y0, x1, y1, shape class) for each shape are saved or not. Should usually be set to True.
 - `noisy_boxes = False`: if True, adds noise to the bounding boxes by randomly adjusting the edges. This can simulate VQA with an imperfect object detector.
 
 Once you've chosen your parameters, simply run `python dataset_gen.py` to generate the data.
 
+## Preprocessing the Data
 
+`prepare_data.py` loads the data you just generated into a form the neural network can understand. The setup function returns everything you will need:
+
+- `train_X_ims`: an image for each question. An array of shape (num_questions * img_size * img_size * 3). Num_questions = the size of the dataset.
+- `train_X_seqs`: the questions in bag-of-words format. For example, if the vocabulary is `["circle", "triangle", "rectangle", "red", "green", "blue", "any"]`, then the question "red circle" would be `[1, 0, 0, 1, 0, 0, 0]`. Total shape: (num_questions * vocab_size). Note that bag-of-words only works for this dataset because the order of words in the question doesn't matter.
+- `train_box_features`: for each question, an array of small images representing the contents of the bounding box for each object in the image, resized to a standard size. Total shape: (num_questions * MAX_COUNT * BOX_SIZE * BOX_SIZE * 3). `MAX_COUNT` is the maximum number of shapes per image that your model can handle. If the image contains fewer shapes, excess boxes will be zeros. `BOX_SIZE` is the (square) size to which all bounding box contents are resized for input to the model. Both of these values are set in `constants.py`.
+- `train_box_classes`: if you want a simpler model that only cares about the label of each bounding box, not the constants, use this. In this project, class = shape and the classes are onehot encoded, so for example, `[1, 0, 0]` is "circle". For color information, you will need to look at the actual image. Total shape: (num_questions * MAX_COUNT * 3)
+- `train_Y`: the onehot encoded answers, of shape (num_questions * num_answers)
+- (Repeat these vectors for the test data)
+- `vocab_size`: the number of possible words in the question
+- `num_answers`: the number of possible answers (will be from 0 to max_shape_count)
+- Any other values returned are not currently used.
 
 ## Code Locations
 

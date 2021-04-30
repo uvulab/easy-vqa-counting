@@ -2,7 +2,8 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 import argparse
 import sys
 from easy_vqa_model import build_model_easy_vqa, arrange_inputs_easy_vqa
-from count_model import build_model_count, arrange_inputs_count
+from count_model import build_model_count_concat, build_model_count_sum_32 , \
+build_model_count_mul_288, build_model_count_mul_32, arrange_inputs_count, build_model_count_sum_288, build_model_count_gated_tanh
 from prepare_data import setup
 
 """
@@ -16,14 +17,17 @@ at each bounding box, all resized to BOX_SIZE, or zeros if no object is present
 -box_classes are, for each question, a MAX_COUNT * NUM_SHAPE_CLASSES (from constants.py) array where each row represents
 one box in the image, containing either the one hot encoding of that box's shape class, or zeros if not enough boxes
 """
+
+#Fusion: build_model_count_concat | build_model_count_sum_32  | build_model_count_sum_288
+# 		 build_model_count_mul_32 | build_model_count_mul_288 | build_model_count_gated_tanh
 model_functions = {
 	"easy_vqa": (build_model_easy_vqa, arrange_inputs_easy_vqa),
-	"count": (build_model_count, arrange_inputs_count)
+	"count": (build_model_count_gated_tanh, arrange_inputs_count)
 }
 
 
-build_model = build_model_count
-arrange_inputs = arrange_inputs_count
+#build_model = build_model_count_concat
+#arrange_inputs = arrange_inputs_count
 use_boxes = True
 
 if len(sys.argv) < 3:
@@ -39,7 +43,7 @@ else:
 	for name in model_functions:
 		print(name)
 	exit()
-big_model = len(sys.argv) >= 3 and sys.argv[2] == "--big-model"
+big_model = True #len(sys.argv) >= 3 and sys.argv[2] == "--big-model"
 
 
 if big_model:
@@ -61,7 +65,7 @@ model.fit(
   train_Y,
   validation_data=(arrange_inputs(test_X_ims, test_X_seqs, test_box_features, test_box_classes), test_Y),
   shuffle=True,
-  epochs=50,
+  epochs=200,
   batch_size=32,
   callbacks=[checkpoint],
 )

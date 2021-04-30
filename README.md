@@ -60,13 +60,28 @@ We include two example models, `easy_vqa_model` and `count_model`. You can creat
 
 Observe that `easy_vqa_model` takes the entire image and the question as inputs, extracts features from each separately, then merges the image and question features to produce a final answer. This architecture worked fine for the original non-counting `easy_vqa`, but it struggles to count beyond one. Evidently, the convolutional layers can detect whether a feature is present or not, but cannot keep track of multiple objects separately. This failure demonstrates the need for specialized counting networks.
 
-The `count_model`, instead of using the full image, uses a list of small images representing the contents of each bounding box. `img_model` is a repeated module for each box image, which takes the image and the question as an input, extracts features from the image, and outputs a score of whether that box should be counted for that question. The scores for each box are then summed, and the sum is converted to an answer. This model performs much better than the last on counting, showing the importance of detecting individual objects.
+The `count_model`, instead of using the full image, uses a list of small images representing the contents of each bounding box. `img_model` is a repeated module for each box image, which takes the image and the question as an input, extracts features from the image, and outputs a score of whether that box should be counted for that question. The scores for each box are then summed, and the sum is converted to an answer. This model performs much better than the last on counting, showing the importance of detecting individual objects. Note that this model is similar to SoftCount in the literature and shares the same weaknesses: it can't detect relationships between objects, and can't handle multiple bounding boxes over the same object (this object would be counted multiple times).
 
 - `arrange_inputs(images, questions, boxes, box_classes)`: takes all of the possible inputs returned by `prepare_data.py` and returns a list of the inputs actually needed for your model. For example, `easy_vqa_model` needs `[images, questions]`, and `count_model` needs a sequence of boxes (note how the dimensions are rearranged) followed by the questions.
 
 When creating your own model, create a new file and import it to `train.py` in the same manner as these two models.
 
 To train a count_model on the default dataset you just generated, run `python train.py data/five count`. The model will train for 50 epochs, but you can of course change this number. WARNING: sometimes a bad random initialization will cause the model not to learn anything at all. If accuracy doesn't improve at all after several epochs, terminate the program and try again. Accuracy should steadily improve and eventually reach 1.0 if you have 5 or fewer shapes.
+
+## Example Experiment: Effects of Noise
+
+This experiment tests whether we can break the `count_model` with imperfect bounding boxes, as will be found in more realistic data. Here are the test accuracy results for various max counts, with and without random noise added to the bounding box coordinates (see `dataset_gen.py` for details).
+
+- Max count 5, no noise: 1.0
+- Max count 5, noise: .90
+- Max count 7, no noise: .76
+- Max count 7, noise: .68
+- Max count 10, no noise: .70
+- Max count 10, noise: .48
+
+To replicate this experiment, you would need to run `dataset_gen.py` six times, with `max_shape_count` (5, 7, 10), `img_size` (64, 72, 80) respectively, and `noisy_boxes` True and False for each count. Also, MAX_COUNT in `constants.py` should be set to the chosen `max_shape_count` for each training run. 
+
+These results show some weaknesses of the `count_model`. Imperfect bounding boxes and increasing numbers of objects both cause accuracy to go down. A likely explanation is that these conditions increase the complexity of training a model to detect objects and count the detected objects at the same time. The noisy bounding boxes may also contain pieces of neighboring objects. Most VQA literature uses a pre-trained object detector, and this is likely necessary for more challenging datasets.
 
 ## Code Locations
 

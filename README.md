@@ -36,6 +36,10 @@ Let's head to `dataset_gen.py` and walk through generating your first dataset. F
 
 Once you've chosen your parameters, simply run `python dataset_gen.py` to generate the data.
 
+### Example Images
+
+![](./data/box_test/train/0.png)
+
 ## Preprocessing the Data
 
 `prepare_data.py` loads the data you just generated into a form the neural network can understand. You won't need to run this file directly but you should understand how it works. The setup function returns everything you will need:

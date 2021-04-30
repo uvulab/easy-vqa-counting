@@ -22,7 +22,7 @@ one box in the image, containing either the one hot encoding of that box's shape
 # 		 build_model_count_mul_32 | build_model_count_mul_288 | build_model_count_gated_tanh
 model_functions = {
 	"easy_vqa": (build_model_easy_vqa, arrange_inputs_easy_vqa),
-	"count": (build_model_count_gated_tanh, arrange_inputs_count)
+	"count": (build_model_count_concat, arrange_inputs_count)
 }
 
 

@@ -46,6 +46,27 @@ Once you've chosen your parameters, simply run `python dataset_gen.py` to genera
 ![](./data/box_test/train/5.png)
 ![](./data/box_test/train/6.png)
 
+### Code to generate a new dataset
+
+```python
+#Parameters to be modified
+dataset_name = "five"
+color_questions = True
+shape_questions = True
+n_train_images = 8000
+n_test_images = 1000
+max_shape_count = 5
+img_size = 64
+min_shape_size = 15
+allow_overlap = False
+balance_factor = 3 #ratio of the most common answer to the least common answer
+include_boxes = True
+
+#Code that generates the questions
+train_questions, train_images, train_names, train_annotations = generate_data(n_train_images)
+test_questions, test_images, test_names, test_annotations = generate_data(n_test_images)
+```
+
 ## Preprocessing the Data
 
 `prepare_data.py` loads the data you just generated into a form the neural network can understand. You won't need to run this file directly but you should understand how it works. The setup function returns everything you will need:

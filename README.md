@@ -6,14 +6,23 @@ This project is motivated by the tendency for visual question answering (VQA) mo
 
 We hope this code will provide a starting point to investigate more challenging counting problems.
 
+### What is the task about?
+The main goal of VQA is to take an image (feature maps) and a question (text embedding) to get a single answer (one or few words). In its simplest implementation, e.g. using [easy-VQA-keras](https://github.com/vzhou842/easy-VQA-keras), VQA models take a single feature map of the image and a single text embedding of the question to perform a fusion between them and produce an answer.
+
+However, some models as [TallyQA](https://arxiv.org/abs/1810.12440) and [Interpretable Counting for Visual Question Answering](https://blog.einstein.ai/interpretable-counting-for-visual-question-answering/) use features maps obtained from the predictions of object detectors, i.e. these models use the predicted bounding boxes. This project is based on the approach of object detection because we found that this approach is more related to counting.
+
+### Quick insight about our method
+
+Our method is based on the following steps:
+
+- a question embedding which is just a simple Bag of Words (BoW) of the question. This is a simple approach but enough for counting questions which will be pretty similar.
+- a few embeddings from the bounding boxes. For simplicity, we still do not have the object detector right now, but we have the bounding boxes since we generate the dataset we know were are the objects. We take every bounding box and create a feature map for every one present in the image. For example, in the next figure we have only three bounding boxes, so we have three feature maps in the rest of the model.
+- a fusion scheme which can be an element-wise sum, concatenation, or multiplication  as explained in [Fusion Techniques](https://www.sciencedirect.com/science/article/pii/S1566253518308893). 
+- An additional option is to use element-wise multiplication along with Gated Tanh Units [(GTU)](https://arxiv.org/abs/1707.07998). This GTUs are meant to learn non-linear transformations within the network. These GTUs have shown a strong empirical advantage over traditional ReLU or tanh layers alone. When dealing with small datasets (e.g. 300 images for training), GTUs have shown to speed up the convergence and performance.
+
 <p align="center">
     <img src="https://github.com/jksenter/cosc620_vqa/blob/master/vqa-model.png?raw=true" width="800"/>
 </p>
-
-## What is the task about?
-The main goal of VQA is to take an image (feature maps) and a question (text embedding) to get a single answer (one or few words). In its simplest implementation, e.g. using [easy-VQA-keras](https://github.com/vzhou842/easy-VQA-keras), VQA models take a single feature map of the image and a single text embedding of the question to perform a fusion between them and produce an answer.
-
-However, some models as [TallyQA](https://arxiv.org/abs/1810.12440) and [Interpretable Counting for Visual Question Answering](https://blog.einstein.ai/interpretable-counting-for-visual-question-answering/) use features maps obtained from the predictions of object detectors, i.e. these models use the predicted bounding boxes.
 
 ## Install the following libraries
 

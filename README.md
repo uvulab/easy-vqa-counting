@@ -39,6 +39,12 @@ Once you've chosen your parameters, simply run `python dataset_gen.py` to genera
 ### Example Images
 
 ![](./data/box_test/train/0.png)
+![](./data/box_test/train/1.png)
+![](./data/box_test/train/2.png)
+![](./data/box_test/train/3.png)
+![](./data/box_test/train/4.png)
+![](./data/box_test/train/5.png)
+![](./data/box_test/train/6.png)
 
 ## Preprocessing the Data
 

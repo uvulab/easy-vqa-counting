@@ -11,7 +11,9 @@ We hope this code will provide a starting point to investigate more challenging 
 </p>
 
 ## What is the task about?
-The main goal of VQA is to take an image (feature maps) and a question (text embedding) to get a single answer (one or few words). In its simplest implementation, e.g. using [easy-VQA-keras](https://github.com/vzhou842/easy-VQA-keras), 
+The main goal of VQA is to take an image (feature maps) and a question (text embedding) to get a single answer (one or few words). In its simplest implementation, e.g. using [easy-VQA-keras](https://github.com/vzhou842/easy-VQA-keras), VQA models take a single feature map of the image and a single text embedding of the question to perform a fusion between them and produce an answer.
+
+However, some models as [TallyQA](https://arxiv.org/abs/1810.12440) and [Interpretable Counting for Visual Question Answering](https://blog.einstein.ai/interpretable-counting-for-visual-question-answering/) use features maps obtained from the predictions of object detectors, i.e. these models use the predicted bounding boxes.
 
 ## Install the following libraries
 

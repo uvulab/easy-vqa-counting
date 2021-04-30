@@ -7,7 +7,7 @@ This project is motivated by the tendency for visual question answering models t
 We hope this code will provide a starting point to investigate more challenging counting problems.
 
 <p align="center">
-    <img src="https://github.com/jksenter/cosc620_vqa/blob/master/model.png?raw=true" width="600"/>
+    <img src="https://github.com/jksenter/cosc620_vqa/blob/master/model.png?raw=true" width="800"/>
 </p>
 
 ## Install the following libraries

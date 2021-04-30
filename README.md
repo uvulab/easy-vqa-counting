@@ -38,11 +38,11 @@ In addition, when we combined any of the previous method with the Gated Tanh Uni
 ```python
 model_functions = {
 	"easy_vqa": (build_model_easy_vqa, arrange_inputs_easy_vqa),
-	"count": (build_model_count_gated_tanh, arrange_inputs_count)
+	"count": (build_model_count_concat, arrange_inputs_count)
 }
 ```
 
-By default the method aaaa is set. We have 6 different predefined method for testing purposes. You can pick one of the following:
+By default the method build_model_count_concat is set. We have 6 different predefined method for testing purposes. You can pick one of the following:
 - build_model_count_concat 
 - build_model_count_sum_32  
 - build_model_count_sum_288

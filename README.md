@@ -46,7 +46,7 @@ Once you've chosen your parameters, simply run `python dataset_gen.py` to genera
 ![](./data/box_test/train/5.png)
 ![](./data/box_test/train/6.png)
 
-### Code to generate a new dataset
+### Code to generate a new dataset (dataset_gen.py)
 
 ```python
 #Parameters to be modified

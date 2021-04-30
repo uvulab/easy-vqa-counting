@@ -33,7 +33,7 @@ As indicated in [Fusion Techniques](https://www.sciencedirect.com/science/articl
 - Concatenation.
 - Multiplication (fastest method to converge).
 
-In addition, when we combined any of the previous method with the Gated Tanh Units the performance and convergence were improved. In the class train.py, the method for fusion is defined as
+In addition, when we combined any of the previous method with the Gated Tanh Units the performance and convergence were improved. In the class train.py, you can select the method for fusion you want. The code looks like:
 
 ```python
 model_functions = {

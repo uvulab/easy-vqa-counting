@@ -2,13 +2,12 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 import argparse
 import sys
 from easy_vqa_model import build_model_easy_vqa, arrange_inputs_easy_vqa
-from count_model import build_model_count_concat, build_model_count_sum_32 , \
-build_model_count_mul_288, build_model_count_mul_32, arrange_inputs_count, build_model_count_sum_288, build_model_count_gated_tanh
+from count_model import build_model_count, arrange_inputs_count
 from prepare_data import setup
 
 """
 To use a different model: create a new model file and import new versions of build_model and arrange_inputs
--build_model(im_shape, vocab_size, num_answers, big_model) creates the model
+-build_model(im_shape, vocab_size, num_answers, args) creates the model
 -arrange_inputs(images, questions, boxes, box_classes) returns a list of desired inputs in order of input to the model
 see easy_vqa_model.py for an example
 -questions are bag-of-words encoded
@@ -18,20 +17,18 @@ at each bounding box, all resized to BOX_SIZE, or zeros if no object is present
 one box in the image, containing either the one hot encoding of that box's shape class, or zeros if not enough boxes
 """
 
-#Fusion: build_model_count_concat | build_model_count_sum_32  | build_model_count_sum_288
-# 		 build_model_count_mul_32 | build_model_count_mul_288 | build_model_count_gated_tanh
 model_functions = {
 	"easy_vqa": (build_model_easy_vqa, arrange_inputs_easy_vqa),
-	"count": (build_model_count_concat, arrange_inputs_count)
+	"count": (build_model_count, arrange_inputs_count)
 }
 
+#easy_vqa args: either empty or "--big-model"
+#count args: fusion method: "concat", "mul_32", "mul_288", "add_32", "add_288", or empty for default gated tanh
 
-#build_model = build_model_count_concat
-#arrange_inputs = arrange_inputs_count
 use_boxes = True
 
 if len(sys.argv) < 3:
-	print("usage: python train.py data_dir model_name (--big-model)")
+	print("usage: python train.py data_dir model_name (...args)")
 	exit()
 
 data_dir = sys.argv[1]
@@ -43,11 +40,9 @@ else:
 	for name in model_functions:
 		print(name)
 	exit()
-big_model = True #len(sys.argv) >= 3 and sys.argv[2] == "--big-model"
-
-
-if big_model:
-  print('Using big model')
+args = []
+if len(sys.argv) > 3:
+	args = sys.argv[3:]
 
 # Prepare data
 train_X_ims, train_X_seqs, train_box_features, train_box_classes, train_Y, train_image_ids, \
@@ -55,7 +50,7 @@ test_X_ims, test_X_seqs, test_box_features, test_box_classes, test_Y, test_image
 im_shape, vocab_size, num_answers, _, _, _ = setup(data_dir, use_boxes=use_boxes)
 
 print('\n--- Building model...')
-model = build_model(im_shape, vocab_size, num_answers, big_model)
+model = build_model(im_shape, vocab_size, num_answers, args)
 model.summary()
 checkpoint = ModelCheckpoint('model.h5', save_best_only=True)
 

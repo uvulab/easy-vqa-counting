@@ -22,33 +22,33 @@ def build_model_count(im_shape, vocab_size, num_answers, args):
 	img_model = Flatten()(img_model)
 
 	#choose a fusion method
-	if args[0] == "concat":
+	if len(args) > 0 and args[0] == "concat":
 		img_model = Concatenate()([img_model, question_input_2])
 		img_model = Dense(32, activation='relu')(img_model)
 		img_score = Dense(1, activation='relu')(img_model)
 
-	elif args[0] == "mul_288":
+	elif len(args) > 0 and args[0] == "mul_288":
 		#note: this only works if the flattened convolutional output has size 288, image size 64
 		question = Dense(288, activation='relu')(question_input_2)
 		img_model = Multiply()([question, img_model])
 		img_model = Dense(32, activation='relu')(img_model)
 		img_score = Dense(1, activation='relu')(img_model)
 		
-	elif args[0] == "mul_32":
+	elif len(args) > 0 and args[0] == "mul_32":
 		img_model = Dense(32, activation='tanh')(img_model)
 		question = Dense(32, activation='tanh')(question_input_2)
 		img_model = Multiply()([question, img_model])
 		img_model = Dense(32, activation='relu')(img_model)
 		img_score = Dense(1, activation='relu')(img_model)
 		
-	elif args[0] == "add_32":
+	elif len(args) > 0 and args[0] == "add_32":
 		img_model = Dense(32, activation='tanh')(img_model)
 		question = Dense(32, activation='tanh')(question_input_2)
 		img_model = Add()([question, img_model])
 		img_model = Dense(32, activation='relu')(img_model)
 		img_score = Dense(1, activation='relu')(img_model)
 		
-	elif args[0] = "add_288":
+	elif len(args) > 0 and args[0] = "add_288":
 		question = Dense(288, activation='relu')(question_input_2)
 		img_model = Add()([question, img_model])
 		img_model = Dense(32, activation='relu')(img_model)

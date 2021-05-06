@@ -60,7 +60,7 @@ model.fit(
   train_Y,
   validation_data=(arrange_inputs(test_X_ims, test_X_seqs, test_box_features, test_box_classes), test_Y),
   shuffle=True,
-  epochs=200,
+  epochs=100,
   batch_size=32,
   callbacks=[checkpoint],
 )

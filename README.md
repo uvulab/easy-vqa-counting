@@ -41,8 +41,7 @@ Our method takes the question embedding (BoW) and the feature maps bounding boxe
 Currently supported model names and arguments (positional arguments):
 
 - `easy_vqa`: optional arg `--big-model` to add more convolutional layers
-- `count`: optional arg `concat`, `add_n`, `add_288`, `mul_n`, `mul_288` to change the fusion method from the Gated Tanh Unit default method. Not recommended.
-- `#`: (required argument) the number of neurons for the feature map (in the code is called <em>dense_size</em>). This parameter is used in <em>add_n</em>, <em>mul_n</em>, and the default fusion method (Gated Tanh Units). By default, <em>concat</em>, <em>add_288</em>, and <em>mul_288</em> have wired values for the feature size (just for the simplicity of some experiments).
+- `count`: optional arg `concat`, `add_n`, `mul_n` to change the fusion method from the Gated Tanh Unit default method. Default is recommended. If using `add_n` or `mul_n`, include an additional integer argument equal to the size of the image and question embedding to be fused. 
 
 Example 1:
 ```python
@@ -159,9 +158,7 @@ Therefore, we use gated tanh as the default fusion method and recommend you do t
 To experiment with other fusion methods, add one of the following command line arguments when using the `count` model:
 - "concat"
 - "add_32"
-- "add_288"
 - "mul_32"
-- "mul_288"
 
 Details are in the class count_model.py. You can define your own method in this class.
 

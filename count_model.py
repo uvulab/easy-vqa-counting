@@ -3,7 +3,7 @@ from tensorflow.keras import Model
 from tensorflow.keras.layers import Input, Conv2D, MaxPooling2D, Flatten, Concatenate, Dense, Add, Multiply
 from tensorflow.keras.optimizers import Adam
 
-#args: fusion method, either "concat", "mul_288", "mul_32", "add_288", "add_32", or defaults to gated tanh if empty
+#args: fusion method, either "concat", "mul_288", "mul_n", "add_288", "add_n", or defaults to gated tanh if empty
 def build_model_count(im_shape, vocab_size, num_answers, args):
 	#total inputs: a list of MAX_COUNT (BOX_SIZE * BOX_SIZE * 3) images, each containing the resized
 	#contents of one bounding box; followed by the bag-of-words question

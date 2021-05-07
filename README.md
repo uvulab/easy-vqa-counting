@@ -40,8 +40,8 @@ Our method takes the question embedding (BoW) and the feature maps bounding boxe
 
 Currently supported model names and arguments:
 
--`easy_vqa`: optional arg `--big-model` to add more convolutional layers
--`count`: optional arg `concat`, `add_32`, `add_288`, `mul_32`, `mul_288` to change the fusion method. Not recommended.
+- `easy_vqa`: optional arg `--big-model` to add more convolutional layers
+- `count`: optional arg `concat`, `add_32`, `add_288`, `mul_32`, `mul_288` to change the fusion method. Not recommended.
 
 ## Generating Data
 

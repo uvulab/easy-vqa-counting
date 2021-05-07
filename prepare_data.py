@@ -78,6 +78,9 @@ def setup(data_dir, use_boxes=False):
           for n in a:
             box += (int(n),)
           boxes.append(box)
+        if len(boxes) > MAX_COUNT:
+          print("Error: an image contains "+str(len(boxes))+" boxes, but MAX_COUNT is "+str(MAX_COUNT)+". Please increase MAX_COUNT in constants.py")
+          exit()
         result[image_id] = boxes
     return result
 

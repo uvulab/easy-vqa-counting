@@ -21,12 +21,13 @@ def build_model_count(im_shape, vocab_size, num_answers, args):
 	img_model = MaxPooling2D()(img_model)
 	img_model = Flatten()(img_model)
 
+	fusion_size = 32
 	#choose a fusion method
 	if len(args) > 0:
 		try:
 			fusion_size = int(args[-1])
 		except ValueError:
-			fusion_size = 32
+			pass
 	
 	if len(args) > 0 and args[0] == "concat":
 		img_model = Concatenate()([img_model, question_input_2])

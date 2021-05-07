@@ -38,10 +38,17 @@ Our method takes the question embedding (BoW) and the feature maps bounding boxe
 - command line arguments after model_name are passed to the model and specific to the chosen model
 - to run with the default data: `python train.py data/five count`
 
-Currently supported model names and arguments:
+Currently supported model names and arguments (positional arguments):
 
 - `easy_vqa`: optional arg `--big-model` to add more convolutional layers
-- `count`: optional arg `concat`, `add_32`, `add_288`, `mul_32`, `mul_288` to change the fusion method. Not recommended.
+- `count`: optional arg `concat`, `add_n`, `add_288`, `mul_n`, `mul_288` to change the fusion method from the Gated Tanh Unit default method. Not recommended.
+- `#`: optional arg with the number of neurons for the feature map (in the code is called `dense_size`).
+
+Example:
+```python
+python train.py data/box_test_v3 count add_n 32
+```
+- This line uses the dataset located in `data/box_test_v3`, using the `count` model, the `add_n` as the fusion method, and the feature maps in the fusion has a size of `32`.
 
 ## Generating Data
 

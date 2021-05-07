@@ -133,7 +133,7 @@ When creating your own model, create a new file and import it to `train.py` in t
 
 To train a count_model on the default dataset you just generated, run `python train.py data/five count`. The model will train for 100 epochs, but you can of course change this number. WARNING: sometimes a bad random number generation will cause the model not to learn anything at all, or to experience a sudden drop in accuracy. If accuracy doesn't improve at all after several epochs, terminate the program and try again. Accuracy should steadily improve and eventually reach 1.0 if you have 5 or fewer shapes.
 
-### Fusion methods
+## Fusion methods
 
 As indicated in [Fusion Techniques](https://www.sciencedirect.com/science/article/pii/S1566253518308893), element-wise operations can be used to perform the fusion. We performed the following operations:
 - Addition (slowest method to converge).

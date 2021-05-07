@@ -23,7 +23,7 @@ model_functions = {
 }
 
 #easy_vqa args: either empty or "--big-model"
-#count args: fusion method: "concat", "mul_32", "mul_288", "add_32", "add_288", or empty for default gated tanh
+#count args: fusion method: "concat", "mul_n", "mul_288", "add_n", "add_288", or empty for default gated tanh
 
 use_boxes = True
 

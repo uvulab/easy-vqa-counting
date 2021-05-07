@@ -34,16 +34,20 @@ def build_model_count(im_shape, vocab_size, num_answers, args):
 		img_model = Dense(32, activation='relu')(img_model)
 		img_score = Dense(1, activation='sigmoid')(img_model)
 		
-	elif len(args) > 0 and args[0] == "mul_32":
-		img_model = Dense(32, activation='tanh')(img_model)
-		question = Dense(32, activation='tanh')(question_input_2)
+	elif len(args) > 0 and args[0] == "mul_n":
+		dense_size = int(args[1])
+
+		img_model = Dense(dense_size, activation='tanh')(img_model)
+		question = Dense(dense_size, activation='tanh')(question_input_2)
 		img_model = Multiply()([question, img_model])
 		img_model = Dense(32, activation='relu')(img_model)
 		img_score = Dense(1, activation='sigmoid')(img_model)
 		
-	elif len(args) > 0 and args[0] == "add_32":
-		img_model = Dense(32, activation='tanh')(img_model)
-		question = Dense(32, activation='tanh')(question_input_2)
+	elif len(args) > 0 and args[0] == "add_n":
+		dense_size = int(args[1])
+
+		img_model = Dense(dense_size, activation='tanh')(img_model)
+		question = Dense(dense_size, activation='tanh')(question_input_2)
 		img_model = Add()([question, img_model])
 		img_model = Dense(32, activation='relu')(img_model)
 		img_score = Dense(1, activation='sigmoid')(img_model)
@@ -55,14 +59,16 @@ def build_model_count(im_shape, vocab_size, num_answers, args):
 		img_score = Dense(1, activation='sigmoid')(img_model)
 	#default: gated tanh	
 	else:
+		dense_size = int(args[0])
+
 		#(1) Gated tanh of the image
-		y_hat_img = Dense(32, activation='tanh')(img_model)
-		g_img = Dense(32, activation='sigmoid')(img_model)
+		y_hat_img = Dense(dense_size, activation='tanh')(img_model)
+		g_img = Dense(dense_size, activation='sigmoid')(img_model)
 		img_model = Multiply()([y_hat_img, g_img])
 
 		#(2) Gated tanh of the question
-		y_hat_question = Dense(32, activation='tanh')(question_input_2)
-		g_question = Dense(32, activation='sigmoid')(question_input_2)
+		y_hat_question = Dense(dense_size, activation='tanh')(question_input_2)
+		g_question = Dense(dense_size, activation='sigmoid')(question_input_2)
 		y_question = Multiply()([y_hat_question, g_question])
 
 		#fusion happens here

@@ -23,7 +23,7 @@ model_functions = {
 }
 
 #easy_vqa args: either empty or "--big-model"
-#count args: fusion method: "concat", "mul_n", "mul_288", "add_n", "add_288", or empty for default gated tanh
+#count args: fusion method: "concat", "mul_n", "add_n", or empty for default gated tanh. #optionally add an integer for fusion layer size.
 
 use_boxes = True
 
@@ -60,7 +60,7 @@ model.fit(
   train_Y,
   validation_data=(arrange_inputs(test_X_ims, test_X_seqs, test_box_features, test_box_classes), test_Y),
   shuffle=True,
-  epochs=100,
+  epochs=50,
   batch_size=32,
   callbacks=[checkpoint],
 )

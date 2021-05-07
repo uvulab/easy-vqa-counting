@@ -1,4 +1,5 @@
 import os
+import math
 import json
 import numpy as np
 import cv2
@@ -7,21 +8,26 @@ from image_gen import Image
 
 #EDIT THESE PARAMETERS---------------------------------
 dataset_name = "five"
+max_shape_count = 5
 color_questions = True
 shape_questions = True
 n_train_images = 8000
 n_test_images = 1000
-max_shape_count = 5
 img_size = 64
 min_shape_size = 15
 allow_overlap = False
-balance_factor = 3 #ratio of the most common answer to the least common answer
-include_boxes = True
+balance_factor = math.ceil(max_shape_count / 2.0) #ratio of the most common answer to the least common answer
+#should increase along with max_shape_count as the proportion of the least common answer (max) decreases
+include_boxes = True #whether to save bounding boxes
+
+noisy_boxes = False #whether to randomly move the bounds to simulate imperfect object detection
+noise_bounds = (-5, 15) #min and max boundary adjustment. negative=inward, positive=outward
+noise_prob = 0.33 #prob of changing each edge of the bounding box
 #------------------------------------------------------
 
 color_names = {RED: "red", GREEN: "green", BLUE: "blue"}
 shape_names = {CIRCLE: "circle", TRIANGLE: "triangle", RECTANGLE: "rectangle"}
-number_names = ["zero", "one", "two", "three", "four", "five"]
+number_names = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
 
 def count(shapes, colors, shape, color):
 	n = 0
@@ -47,6 +53,18 @@ def generate_number_questions(shapes, colors, img_filename):
 				result.append([color_names[color]+" "+shape_names[shape], count(shapes, colors, shape, color), img_filename])
 	return result
 
+def add_noise(x0, y0, x1, y1):
+	shifts = np.random.randint(noise_bounds[0], noise_bounds[1], size=4)
+	if np.random.random() < noise_prob:
+		x0 = max(x0 - shifts[0], 0)
+	if np.random.random() < noise_prob:
+		y0 = max(y0 - shifts[1], 0)
+	if np.random.random() < noise_prob:
+		x1 = min(x1 + shifts[2], img_size - 1)
+	if np.random.random() < noise_prob:
+		y1 = min(y1 + shifts[3], img_size - 1)
+	return x0, y0, x1, y1
+
 def generate_data(n):
 	questions = []
 	images = []
@@ -64,6 +82,8 @@ def generate_data(n):
 			a = []
 			for i, (x0, y0, x1, y1) in enumerate(img.boxes):
 				#for now, class = shape number, see constants.py
+				if noisy_boxes:
+					x0, y0, x1, y1 = add_noise(x0, y0, x1, y1)
 				a.append((x0, y0, x1, y1, img.shapes[i]))
 			annotations.append(a)
 	return questions, images, image_names, annotations
@@ -109,10 +129,12 @@ np.random.seed(2021)
 
 train_questions, train_images, train_names, train_annotations = generate_data(n_train_images)
 test_questions, test_images, test_names, test_annotations = generate_data(n_test_images)
-print(len(train_questions),len(test_questions))
+print("before balancing:")
+print(len(train_questions),"train questions,",len(test_questions),"test questions")
 train_questions = balance_answers(train_questions)
 test_questions = balance_answers(test_questions)
-print(len(train_questions),len(test_questions))
+print("after balancing:")
+print(len(train_questions),"train questions,",len(test_questions),"test questions")
 
 dataset_dir = "data/"+dataset_name
 question_dir = dataset_dir + "/questions"

@@ -2,14 +2,14 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPooling2D, Flatten, Multiply
 from tensorflow.keras.optimizers import Adam
 
-def build_model_easy_vqa(im_shape, vocab_size, num_answers, big_model):
+def build_model_easy_vqa(im_shape, vocab_size, num_answers, args):
   # The CNN
   im_input = Input(shape=im_shape)
   x1 = Conv2D(8, 3, padding='same')(im_input)
   x1 = MaxPooling2D()(x1)
   x1 = Conv2D(16, 3, padding='same')(x1)
   x1 = MaxPooling2D()(x1)
-  if big_model:
+  if len(args) > 0 and args[0] == "--big-model":
     x1 = Conv2D(32, 3, padding='same')(x1)
     x1 = MaxPooling2D()(x1)
   x1 = Flatten()(x1)

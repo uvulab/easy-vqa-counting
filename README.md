@@ -47,7 +47,7 @@ Example 1:
 ```python
 python train.py data/box_test_v3 count add_n 64
 ```
-- This line uses the dataset located in <em>data/box_test_v3</em>, using the <em>count</em> model, the <em>add_n</em> as the fusion method, and the feature maps in the fusion has a size of <em>64</em>.
+- This line uses the dataset located in <em>data/box_test_v3</em>, using the <em>count</em> model, <em>add_n</em> as the fusion method, and the feature maps in the fusion have a size of <em>64</em>.
 
 Example 2:
 ```python
@@ -157,8 +157,8 @@ Therefore, we use gated tanh as the default fusion method and recommend you do t
 
 To experiment with other fusion methods, add one of the following command line arguments when using the `count` model:
 - "concat"
-- "add_32"
-- "mul_32"
+- "add_n"
+- "mul_n"
 
 Details are in the class count_model.py. You can define your own method in this class.
 

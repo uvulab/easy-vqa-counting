@@ -42,7 +42,7 @@ Currently supported model names and arguments (positional arguments):
 
 - `easy_vqa`: optional arg `--big-model` to add more convolutional layers
 - `count`: optional arg `concat`, `add_n`, `add_288`, `mul_n`, `mul_288` to change the fusion method from the Gated Tanh Unit default method. Not recommended.
-- `#`: optional arg with the number of neurons for the feature map (in the code is called `dense_size`).
+- `#`: (required argument) the number of neurons for the feature map (in the code is called `dense_size`). This parameter is used in `add_n`, `mul_n`, and the default fusion method (Gated Tanh Units). By default, concat, add_288, and mul_288 have wired values for the feature size (just for the simplicity of some experiments).
 
 Example:
 ```python

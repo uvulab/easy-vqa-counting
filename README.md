@@ -44,11 +44,17 @@ Currently supported model names and arguments (positional arguments):
 - `count`: optional arg `concat`, `add_n`, `add_288`, `mul_n`, `mul_288` to change the fusion method from the Gated Tanh Unit default method. Not recommended.
 - `#`: (required argument) the number of neurons for the feature map (in the code is called <em>dense_size</em>). This parameter is used in <em>add_n</em>, <em>mul_n</em>, and the default fusion method (Gated Tanh Units). By default, <em>concat</em>, <em>add_288</em>, and <em>mul_288</em> have wired values for the feature size (just for the simplicity of some experiments).
 
-Example:
+Example 1:
 ```python
 python train.py data/box_test_v3 count add_n 32
 ```
 - This line uses the dataset located in <em>data/box_test_v3</em>, using the <em>count</em> model, the <em>add_n</em> as the fusion method, and the feature maps in the fusion has a size of <em>32</em>.
+
+Example 2:
+```python
+python train.py data/box_test_v3 count 64
+```
+- This line uses the dataset located in <em>data/box_test_v3</em>, using the <em>count</em> model, since there is no fusion method explicitly indicated it will use the Gated Tanh Units, and the feature maps in the fusion has a size of <em>64</em>.
 
 ## Generating Data
 

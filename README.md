@@ -41,19 +41,19 @@ Our method takes the question embedding (BoW) and the feature maps bounding boxe
 Currently supported model names and arguments (positional arguments):
 
 - `easy_vqa`: optional arg `--big-model` to add more convolutional layers
-- `count`: optional arg `concat`, `add_n`, `mul_n` to change the fusion method from the Gated Tanh Unit default method. Default is recommended. If using `add_n` or `mul_n`, include an additional integer argument equal to the size of the image and question embedding to be fused. 
+- `count`: optional arg `concat`, `add_n`, `mul_n` to change the fusion method from the Gated Tanh Unit default method. Default is recommended. Optionally include an additional integer argument equal to the size of the image and question embedding to be fused. Default is 32
 
 Example 1:
 ```python
-python train.py data/box_test_v3 count add_n 32
+python train.py data/box_test_v3 count add_n 64
 ```
 - This line uses the dataset located in <em>data/box_test_v3</em>, using the <em>count</em> model, the <em>add_n</em> as the fusion method, and the feature maps in the fusion has a size of <em>32</em>.
 
 Example 2:
 ```python
-python train.py data/box_test_v3 count 64
+python train.py data/box_test_v3 count
 ```
-- This line uses the dataset located in <em>data/box_test_v3</em>, using the <em>count</em> model, since there is no fusion method explicitly indicated it will use the Gated Tanh Units, and the feature maps in the fusion has a size of <em>64</em>.
+- This line uses the dataset located in <em>data/box_test_v3</em>, using the <em>count</em> model, since there is no fusion method explicitly indicated it will use the Gated Tanh Units, and the feature maps in the fusion will have the default size <em>32</em>.
 
 ## Generating Data
 

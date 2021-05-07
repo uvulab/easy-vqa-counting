@@ -45,7 +45,7 @@ Currently supported model names and arguments:
 
 ## Generating Data
 
-Our dataset consists of small images with varying numbers of shapes, which can be 3 kinds of shape (circle, triangle, square) and 3 colors (red, green, blue). Questions are simply the names of the category to count, for example "triangle" for "how many triangles?", "red square" for "how many red squares?", or "any" for "how many shapes total?". Answers are a number.
+Our dataset consists of small images with varying numbers of shapes, which can be 3 kinds of shape (circle, triangle, square) and 3 colors (red, green, blue). Questions are simply the names of the category to count, for example "triangle" for "how many triangles?", "red square" for "how many red squares?", or "any" for "how many shapes total?". Answers are a number, but the numbers are written as words in case we also want to add other kinds of answers in the future.
 
 Let's head to `dataset_gen.py` and walk through generating your first dataset. First, you'll see a series of parameters to edit.
 - `dataset_name = "five"`: choose a name for your dataset. A folder data/<dataset_name> will be created for your data.

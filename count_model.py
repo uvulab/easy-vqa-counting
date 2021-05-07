@@ -22,53 +22,44 @@ def build_model_count(im_shape, vocab_size, num_answers, args):
 	img_model = Flatten()(img_model)
 
 	#choose a fusion method
+	if len(args) > 0:
+		try:
+			fusion_size = int(args[-1])
+		except ValueError:
+			fusion_size = 32
+	
 	if len(args) > 0 and args[0] == "concat":
 		img_model = Concatenate()([img_model, question_input_2])
 		img_model = Dense(32, activation='relu')(img_model)
 		img_score = Dense(1, activation='sigmoid')(img_model)
-
-	elif len(args) > 0 and args[0] == "mul_288":
-		#note: this only works if the flattened convolutional output has size 288, image size 64
-		question = Dense(288, activation='relu')(question_input_2)
-		img_model = Multiply()([question, img_model])
-		img_model = Dense(32, activation='relu')(img_model)
-		img_score = Dense(1, activation='sigmoid')(img_model)
 		
 	elif len(args) > 0 and args[0] == "mul_n":
-		dense_size = int(args[1])
 
-		img_model = Dense(dense_size, activation='tanh')(img_model)
-		question = Dense(dense_size, activation='tanh')(question_input_2)
+		img_model = Dense(fusion_size, activation='tanh')(img_model)
+		question = Dense(fusion_size, activation='tanh')(question_input_2)
 		img_model = Multiply()([question, img_model])
 		img_model = Dense(32, activation='relu')(img_model)
 		img_score = Dense(1, activation='sigmoid')(img_model)
 		
 	elif len(args) > 0 and args[0] == "add_n":
-		dense_size = int(args[1])
 
-		img_model = Dense(dense_size, activation='tanh')(img_model)
-		question = Dense(dense_size, activation='tanh')(question_input_2)
+		img_model = Dense(fusion_size, activation='tanh')(img_model)
+		question = Dense(fusion_size, activation='tanh')(question_input_2)
 		img_model = Add()([question, img_model])
 		img_model = Dense(32, activation='relu')(img_model)
 		img_score = Dense(1, activation='sigmoid')(img_model)
 		
-	elif len(args) > 0 and args[0] == "add_288":
-		question = Dense(288, activation='relu')(question_input_2)
-		img_model = Add()([question, img_model])
-		img_model = Dense(32, activation='relu')(img_model)
-		img_score = Dense(1, activation='sigmoid')(img_model)
 	#default: gated tanh	
 	else:
-		dense_size = int(args[0])
 
 		#(1) Gated tanh of the image
-		y_hat_img = Dense(dense_size, activation='tanh')(img_model)
-		g_img = Dense(dense_size, activation='sigmoid')(img_model)
+		y_hat_img = Dense(fusion_size, activation='tanh')(img_model)
+		g_img = Dense(fusion_size, activation='sigmoid')(img_model)
 		img_model = Multiply()([y_hat_img, g_img])
 
 		#(2) Gated tanh of the question
-		y_hat_question = Dense(dense_size, activation='tanh')(question_input_2)
-		g_question = Dense(dense_size, activation='sigmoid')(question_input_2)
+		y_hat_question = Dense(fusion_size, activation='tanh')(question_input_2)
+		g_question = Dense(fusion_size, activation='sigmoid')(question_input_2)
 		y_question = Multiply()([y_hat_question, g_question])
 
 		#fusion happens here
